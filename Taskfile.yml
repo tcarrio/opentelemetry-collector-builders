@@ -20,8 +20,8 @@ tasks:
         msg: "The target CPU architecture for the output binary must be defined and non-empty"
       - sh: 'test -n "{{.OCB_CONFIG_FILE}}" && test -f "{{.OCB_CONFIG_FILE}}"'
         msg: "The OCB config file must be defined, non-empty, and exist"
-      - sh: 'test -n "{{.OCB_PROJECT_DIR}}" && test -d "{{.OCB_PROJECT_DIR}}"'
-        msg: "The OCB project directory must be defined, non-empty, and exist"
+      - sh: 'test -n "{{.OCB_PROJECT_DIR}}"'
+        msg: "The OCB project directory must be defined and non-empty"
     requires:
       vars:
         - GOOS
@@ -70,3 +70,14 @@ tasks:
           OCB_PROJECT_DIR: freebsd-simple
           OCB_CONFIG_FILE: ./builder.yaml
   ### END SECTION: FreeBSD OpenTelemetry collector builder
+
+  clean:
+    desc: Clean artifacts from local environment
+    dir: '{{.ROOT_DIR}}'
+    cmds:
+      - >
+        find . -type d -name 'dist' |
+          while read dist_dir
+          do
+            rm -rf "$dist_dir"
+          done

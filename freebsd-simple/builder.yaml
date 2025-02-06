@@ -1,0 +1,12 @@
+dist:
+  name: otelcol-freebsd
+  description: FreeBSD OpenTelemetry Collector binary
+  output_path: ./dist
+
+exporters: [] # TODO
+
+receivers: [] # TODO
+
+processors: [] # TODO
+
+providers: [] # TODO

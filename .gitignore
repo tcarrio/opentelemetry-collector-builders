@@ -1,0 +1,6 @@
+# flake direnv artifacts
+/.direnv
+
+# The output directories for OCB is relative and uses the `dist` name.
+# Revise if conflicts arise, but unlikely.
+dist/

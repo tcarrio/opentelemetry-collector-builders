@@ -1,0 +1,72 @@
+version: '3'
+
+vars:
+  DEFAULT_GOOS:
+    # TODO: Runtime must include these commands
+    sh: uname -s | tr '[:upper:]' '[:lower:]'
+  DEFAULT_GOARCH:
+    # TODO: Support additional platform interpolation
+    sh: uname -m | sed 's/x86_64/amd64/'
+
+tasks:
+  ### BEGIN SECTION: Shared opentelemetry-collector-builder tasks
+  ocb:build:
+    desc: Common opentelemetry-collector-builder build task
+    dir: '{{.OCB_PROJECT_DIR}}'
+    preconditions:
+      - sh: 'test -n "{{.GOOS}}"'
+        msg: "The target OS for the output binary must be defined and non-empty"
+      - sh: 'test -n "{{.GOARCH}}"'
+        msg: "The target CPU architecture for the output binary must be defined and non-empty"
+      - sh: 'test -n "{{.OCB_CONFIG_FILE}}" && test -f "{{.OCB_CONFIG_FILE}}"'
+        msg: "The OCB config file must be defined, non-empty, and exist"
+      - sh: 'test -n "{{.OCB_PROJECT_DIR}}" && test -d "{{.OCB_PROJECT_DIR}}"'
+        msg: "The OCB project directory must be defined, non-empty, and exist"
+    requires:
+      vars:
+        - GOOS
+        - GOARCH
+        - OCB_CONFIG_FILE
+        - OCB_PROJECT_DIR
+    cmds:
+      - 'GOOS={{.GOOS}} GOARCH={{.GOARCH}} ocb --config={{.OCB_CONFIG_FILE}}'
+  ### END SECTION: Shared opentelemetry-collector-builder tasks
+
+
+  ### BEGIN SECTION: Example OpenTelemetry collector builder
+  example:ocb:build:
+    desc: Build the example opentelemetry-collector
+    cmds:
+      - task: ocb:build
+        vars:
+          GOOS: "{{.DEFAULT_GOOS}}"
+          GOARCH: "{{.DEFAULT_GOARCH}}"
+          OCB_PROJECT_DIR: example
+          OCB_CONFIG_FILE: ./builder.yaml
+  ### END SECTION: FreeBSD OpenTelemetry collector builder
+
+
+  ### BEGIN SECTION: Empty opentelemetry-collector
+  empty:ocb:build:
+    desc: Build the empty opentelemetry-collector
+    cmds:
+      - task: ocb:build
+        vars:
+          GOOS: "{{.DEFAULT_GOOS}}"
+          GOARCH: "{{.DEFAULT_GOARCH}}"
+          OCB_PROJECT_DIR: empty
+          OCB_CONFIG_FILE: ./builder.yaml
+  ### END SECTION: Empty opentelemetry-collector
+
+
+  ### BEGIN SECTION: FreeBSD OpenTelemetry collector builder
+  freebsd-simple:ocb:build:
+    desc: Build the simple FreeBSD opentelemetry-collector
+    cmds:
+      - task: ocb:build
+        vars:
+          GOOS: freebsd
+          GOARCH: amd64
+          OCB_PROJECT_DIR: freebsd-simple
+          OCB_CONFIG_FILE: ./builder.yaml
+  ### END SECTION: FreeBSD OpenTelemetry collector builder

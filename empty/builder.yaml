@@ -1,0 +1,12 @@
+dist:
+  name: otelcol-empty
+  description: Worthless OpenTelemetry Collector binary
+  output_path: ./dist
+
+exporters: []
+
+receivers: []
+
+processors: []
+
+providers: []
